@@ -10,6 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "pg": "^8.11.3",
+    "pg-promise": "^11.5.4",
+    "postgres": "^3.4.3",
     "react": "18.2.0",
     "react-native": "0.73.6"
   },
@@ -21,6 +24,8 @@
     "@react-native/eslint-config": "0.73.2",
     "@react-native/metro-config": "0.73.5",
     "@react-native/typescript-config": "0.73.1",
+    "@types/node": "^20.11.26",
+    "@types/pg": "^8.11.2",
     "@types/react": "^18.2.6",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.6.3",
