@@ -41,19 +41,15 @@ class Banco{
     }
 
 
-    async validarLogin(username,password){
+    async validarLogin(username : string,password : string){
         let validacao : string[] = [];
-        let validacaoDoUser : string[] = []
-        let validacaoDoPassword
         let passou
         const resultado =  await this.pool.query('SELECT user, password FROM usuario WHERE user = ' + username)
             for (let res of resultado.res){
                 validacao.push(res)
             }
-            for(const[user,password] of validacao){
-                validacaoDoUser.push(user)
-                validacaoDoPassword.push(password)
-            }
+            let validacaoDoUser: string[] = validacao.map(tupla => tupla[0]);
+            let validacaoDoPassword: string[] = validacao.map(tupla => tupla[0]);
             if(validacaoDoPassword[0] == password){
                 console.log("Bem-Vindo de volta " + username)
                 passou = true
