@@ -41,30 +41,28 @@ class Banco{
     }
 
 
-    async validarLogin(username : string,password : string){
-        let validacao : string[] = [];
+    async validarLogin(username,password){
+        let validacao = [];
         let passou
-        const resultado =  await this.pool.query('SELECT user, password FROM usuario WHERE user = ' + username)
-            for (let res of resultado.res){
-                validacao.push(res)
+        let validacaoDoPassword
+        const query = "SELECT usuarioo, password FROM usuario WHERE usuarioo = $1"
+        const resultado =  await this.pool.query(query,[username])
+            for (let rows of resultado.rows){
+                validacaoDoPassword = rows.password
             }
-            let validacaoDoUser: string[] = validacao.map(tupla => tupla[0]);
-            let validacaoDoPassword: string[] = validacao.map(tupla => tupla[0]);
-            if(validacaoDoPassword[0] == password){
+            if(validacaoDoPassword == password){
                 console.log("Bem-Vindo de volta " + username)
-                passou = true
             }else{
                 console.log("Senha Incorreta")
             }   
-        validacaoDoUser = []
-        validacaoDoPassword = []
+
     }
 
 
-    async cadastrarNovoUsuario(userr: string,password: string){
+    async cadastrarNovoUsuario(userr,password){
         try{
             const values = [userr,password]
-            const query = `INSERT INTO usuario ("user", "password") VALUES (${1},${2})`
+            const query = `INSERT INTO usuario ("usuarioo", "password") VALUES ($1,$2)`
             await this.pool.query({text: query,values})
             console.log("Cadastrado!")
         }catch(error){
@@ -76,4 +74,5 @@ class Banco{
 }
 const x = new Banco();
 x.testarConexao()
-x.cadastrarNovoUsuario("Victor123456","123456")
+x.cadastrarNovoUsuario("Roberto","aaaa")
+x.validarLogin("Roberto","aaaaa")
