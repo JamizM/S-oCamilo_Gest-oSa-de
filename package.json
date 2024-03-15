@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@react-native/metro-config": "^0.73.5",
     "react-native": "^0.73.6"
   }
 }

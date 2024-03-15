@@ -1,0 +1,3 @@
+Para abrir o arquivo AppSap Caminho
+C:\GitHub_PII\SaoCamilo_GestaoSaude\SaoCamiloGestaoSaude\AppSaoCamilo
+Dentro da pasta rodar -> npx expo start (junto com emulador aberto(android))
