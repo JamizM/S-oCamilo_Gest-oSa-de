@@ -1,3 +1,12 @@
-Para abrir o arquivo AppSap Caminho
+Documentação Expo -> https://docs.expo.dev
+
+Para abrir o arquivo AppSaoCamilo
 C:\GitHub_PII\SaoCamilo_GestaoSaude\SaoCamiloGestaoSaude\AppSaoCamilo
+
 Dentro da pasta rodar -> npx expo start (junto com emulador aberto(android))
+
+Dependências do banco de dados:
+npm install pg
+npm install @types/pg --save-dev
+npm install pg-promise
+npm install postgres
