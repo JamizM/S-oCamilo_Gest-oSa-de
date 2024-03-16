@@ -1,17 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Modal } from 'react-native';
+import { useState } from 'react';
+import { ModalLogin } from './src/assets/Components/modal';
 
 export default function App() {
+  const [modalLoginVisible, setModalLoginVisible] = useState(false);
+
+  // function handleModalLogin(){
+  //   setModalLoginVisible(true);
+  // }
+
   return (
     <View style={styles.container}>
       <Image source={require("./src/assets/logo_sao_camilo.png")} style={styles.logo_sao_camilo}/>
       <Text styles={styles.tituloGestaoSaude}>YE-Gestão E Saúde</Text>
 
-      <TouchableOpacity style={styles.btnProximo}>
+      <TouchableOpacity style={styles.btnProximo} onPress={"#"}> 
         <Text style={styles.txtBtnProximo}>Proximo</Text>
       </TouchableOpacity>
 
       <Text style={styles.txtConsulta}>Consulte seus exames médicos</Text>
+
+      <Modal visible={modalLoginVisible}> 
+        <ModalLogin/>
+      </Modal>
+
 
     </View>
   );
