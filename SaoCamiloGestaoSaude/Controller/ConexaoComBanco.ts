@@ -1,7 +1,6 @@
-
+import Mail from "nodemailer/lib/mailer";
 
 const { Pool } = require('pg');
-
 class Banco{
     dbConfig = {
         user: 'avnadmin',
@@ -14,6 +13,7 @@ class Banco{
         },
       };
     pool = new Pool(this.dbConfig)
+    
 
 
     async verTabelaUsuario() {
@@ -41,17 +41,19 @@ class Banco{
     }
 
 
-    async validarLogin(username,password){
+    async validarLogin(email,password){
         let validacao = [];
         let passou
         let validacaoDoPassword
-        const query = "SELECT usuarioo, password FROM usuario WHERE usuarioo = $1"
-        const resultado =  await this.pool.query(query,[username])
+        let validacaoUsuario
+        const query = "SELECT usuarioo, password,email FROM usuario WHERE email = $1"
+        const resultado =  await this.pool.query(query,[email])
             for (let rows of resultado.rows){
                 validacaoDoPassword = rows.password
+                validacaoUsuario = rows.usuarioo
             }
             if(validacaoDoPassword == password){
-                console.log("Bem-Vindo de volta " + username)
+                console.log("Bem-Vindo de volta " + validacaoUsuario)
             }else{
                 console.log("Senha Incorreta")
             }   
@@ -59,10 +61,10 @@ class Banco{
     }
 
 
-    async cadastrarNovoUsuario(userr,password){
+    async cadastrarNovoUsuario(userr,password,email){
         try{
-            const values = [userr,password]
-            const query = `INSERT INTO usuario ("usuarioo", "password") VALUES ($1,$2)`
+            const values = [userr,password,email]
+            const query = `INSERT INTO usuario ("usuarioo", "password","email") VALUES ($1,$2,$3)`
             await this.pool.query({text: query,values})
             console.log("Cadastrado!")
         }catch(error){
@@ -70,9 +72,37 @@ class Banco{
         }
 
     }
+    // async alterarSenha(email,x,novaSenha){
+    //     const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
+    //     Emailsend.mandarEmail(email,numeroAleatorio)
+    //     if (x==numeroAleatorio){
+    //         const values = [novaSenha,email]
+    //         const query = "UPDATE usuario SET password = $1 WHERE email = $2"
+    //         const resultado = await this.pool.query(query,values)
+    //         for (const rows of resultado.rows){
+    //             console.log("Senha do email "+ email +"  redefinido para " + resultado.rows.password)
+    //         }
+
+    //     }
+         
+    // }
+    // async alterarNome(email,x,novoNome){
+    //     const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
+    //     Emailsend.mandarEmail(email,numeroAleatorio)
+    //     if (x==numeroAleatorio){
+    //         const values = [novoNome,email]
+    //         const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
+    //         const resultado = await this.pool.query(query,values)
+    //         for (const rows of resultado.rows){
+    //             console.log("Usuario do email "+ email + "  redefinido para " + resultado.rows.usuarioo)
+    //         }
+
+    //     }
+         
+    // }
 
 }
-const x = new Banco();
-x.testarConexao()
-x.cadastrarNovoUsuario("Roberto","aaaa")
-x.validarLogin("Roberto","aaaaa")
+// const x = new Banco();
+// x.testarConexao()
+// x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
+// x.validarLogin("23.00051-0@maua.br","MAUA")

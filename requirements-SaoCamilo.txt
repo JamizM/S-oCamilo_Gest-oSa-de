@@ -13,3 +13,6 @@ npm install postgres
 
 Dependências da api do Google Drive:
 npm install googleapis@105 @google-cloud/local-auth@2.1.0 --save
+
+Dependências do envio de email:
+npm install nodemailer --save
