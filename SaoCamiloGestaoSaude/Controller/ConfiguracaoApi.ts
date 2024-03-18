@@ -88,3 +88,14 @@ async function listFiles(authClient) {
 }
 
 authorize().then(listFiles).catch(console.error);
+
+
+
+
+const { Storage: X } =  require("@google-cloud/storage")
+const storage = new X
+try{
+    storage.createBucket("Pii-maua")
+}catch(err){
+    console.log("erro" + err)
+}

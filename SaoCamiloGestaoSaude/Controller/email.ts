@@ -1,6 +1,6 @@
 
 
-const nodemailer = require("nodemailer")
+import nodemailer from "nodemailer"
 
 class Emailsend{
     transport = nodemailer.createTransport({
@@ -22,3 +22,13 @@ class Emailsend{
         }).then(() => console.log("Email enviado com sucesso!")).catch((error) => console.log("Erro ao enviar email " + error)) 
     }
 }
+ const y = new Emailsend()
+ const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
+ try{
+    y.mandarEmail("23.00983-7@maua.br",numeroAleatorio)
+    console.log("enviado")
+ }catch{
+    console.log("erro")
+ }
+ 
+

@@ -1,4 +1,29 @@
-import Mail from "nodemailer/lib/mailer";
+const nodemailer = require('nodemailer');
+
+class Emailsend{
+    transport = nodemailer.createTransport({
+        host: "smtp.office365.com",
+        port : 587,
+        secure: false,
+        auth : {
+            user: "piimauadev@outlook.com",
+            pass: "maua2024"
+        }
+    })
+    async mandarEmail(email,codigo){
+        const corpohtml = "<h1>Código de verificação</h1> " + codigo
+        await this.transport.sendMail({
+            from:"Pii-maua <piimauadev@outlook.com>",
+            to : email,
+            subject: "Verificação de conta.",
+            html : corpohtml
+        }).then(() => console.log("Email enviado com sucesso!")).catch((error) => console.log("Erro ao enviar email " + error)) 
+    }
+}
+
+ 
+
+
 
 const { Pool } = require('pg');
 class Banco{
@@ -72,37 +97,44 @@ class Banco{
         }
 
     }
-    // async alterarSenha(email,x,novaSenha){
-    //     const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
-    //     Emailsend.mandarEmail(email,numeroAleatorio)
-    //     if (x==numeroAleatorio){
-    //         const values = [novaSenha,email]
-    //         const query = "UPDATE usuario SET password = $1 WHERE email = $2"
-    //         const resultado = await this.pool.query(query,values)
-    //         for (const rows of resultado.rows){
-    //             console.log("Senha do email "+ email +"  redefinido para " + resultado.rows.password)
-    //         }
+    async alterarSenha(email,novaSenha){
+        const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
+        const y = new Emailsend
+        y.mandarEmail(email,numeroAleatorio)
+        if (true){
+            const values = [novaSenha,email]
+            const query = "UPDATE usuario SET password = $1 WHERE email = $2"
+            const resultado = await this.pool.query(query,values)
 
-    //     }
-         
-    // }
-    // async alterarNome(email,x,novoNome){
-    //     const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
-    //     Emailsend.mandarEmail(email,numeroAleatorio)
-    //     if (x==numeroAleatorio){
-    //         const values = [novoNome,email]
-    //         const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
-    //         const resultado = await this.pool.query(query,values)
-    //         for (const rows of resultado.rows){
-    //             console.log("Usuario do email "+ email + "  redefinido para " + resultado.rows.usuarioo)
-    //         }
+            for (const rows of resultado.rows){
+                console.log("Senha do email "+ email +"  redefinido para " + resultado.rows.password)
+            }
 
-    //     }
+        }
          
-    // }
+    }
+    async alterarNome(email,x,novoNome){
+        const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
+        const y = new Emailsend
+        y.mandarEmail(email,numeroAleatorio)
+        if (x==numeroAleatorio){
+            const values = [novoNome,email]
+            const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
+            const resultado = await this.pool.query(query,values)
+            for (const rows of resultado.rows){
+                console.log("Usuario do email "+ email + "  redefinido para " + resultado.rows.usuarioo)
+            }
+
+        }
+         
+    }
 
 }
-// const x = new Banco();
-// x.testarConexao()
-// x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
-// x.validarLogin("23.00051-0@maua.br","MAUA")
+const x = new Banco();
+x.testarConexao()
+x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
+x.validarLogin("23.00051-0@maua.br","MAUA")
+
+x.alterarSenha("23.00051-0@maua.br","aaaaa")
+x.verTabelaUsuario()
+
