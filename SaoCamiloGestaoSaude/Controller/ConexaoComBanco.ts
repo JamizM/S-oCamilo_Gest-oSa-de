@@ -27,6 +27,7 @@ class Emailsend{
 
 const { Pool } = require('pg');
 class Banco{
+    idClient = 0
     dbConfig = {
         user: 'avnadmin',
         host: 'bancodedadosdopii-maua-b52c.a.aivencloud.com',
@@ -40,7 +41,13 @@ class Banco{
     pool = new Pool(this.dbConfig)
     
 
-
+    getIdClient() {
+        return this.idClient
+    }
+    setIdClient(idClient){
+        this.idClient = idClient
+        return this.idClient
+    }
     async verTabelaUsuario() {
         try{
             const resultado =  await this.pool.query('SELECT * FROM usuario')
@@ -67,18 +74,19 @@ class Banco{
 
 
     async validarLogin(email,password){
-        let validacao = [];
-        let passou
         let validacaoDoPassword
         let validacaoUsuario
+        let idDoClient
         const query = "SELECT usuarioo, password,email FROM usuario WHERE email = $1"
         const resultado =  await this.pool.query(query,[email])
             for (let rows of resultado.rows){
                 validacaoDoPassword = rows.password
                 validacaoUsuario = rows.usuarioo
+                idDoClient = rows.id
             }
             if(validacaoDoPassword == password){
                 console.log("Bem-Vindo de volta " + validacaoUsuario)
+                this.setIdClient(idDoClient)
             }else{
                 console.log("Senha Incorreta")
             }   
@@ -102,13 +110,11 @@ class Banco{
         const y = new Emailsend
         y.mandarEmail(email,numeroAleatorio)
         if (true){
-            const values = [novaSenha,email]
-            const query = "UPDATE usuario SET password = $1 WHERE email = $2"
-            const resultado = await this.pool.query(query,values)
+            const ponteiroIdDoClient = this.getIdClient()
+            const values = [novaSenha,ponteiroIdDoClient]
+            const query = "UPDATE usuario SET password = $1 WHERE id = $2"
+            await this.pool.query(query,values)
 
-            for (const rows of resultado.rows){
-                console.log("Senha do email "+ email +"  redefinido para " + resultado.rows.password)
-            }
 
         }
          
@@ -118,8 +124,9 @@ class Banco{
         const y = new Emailsend
         y.mandarEmail(email,numeroAleatorio)
         if (x==numeroAleatorio){
-            const values = [novoNome,email]
-            const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
+            const getIdClient = this.getIdClient()
+            const values = [novoNome,getIdClient]
+            const query = "UPDATE usuario SET usuarioo = $1 WHERE id = $2"
             const resultado = await this.pool.query(query,values)
             for (const rows of resultado.rows){
                 console.log("Usuario do email "+ email + "  redefinido para " + resultado.rows.usuarioo)
@@ -133,8 +140,8 @@ class Banco{
 const x = new Banco();
 x.testarConexao()
 x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
-x.validarLogin("23.00051-0@maua.br","MAUA")
+x.validarLogin("23.00051-0@maua.br","aaaaa")
 
-x.alterarSenha("23.00051-0@maua.br","aaaaa")
-x.verTabelaUsuario()
+x.alterarSenha("23.00051-0@maua.br","xxxx")
+// x.verTabelaUsuario()
 
