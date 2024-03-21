@@ -1,5 +1,6 @@
 
 
+
 const nodemailer = require('nodemailer');
 
 class Emailsend{
@@ -40,6 +41,12 @@ class Banco{
           rejectUnauthorized: false, // Necessário para conexão com Aiven
         },
       };
+
+
+    // Contrução com o email, para assim evitar mais requests ao banco de dados
+    // Comandos de getter e set do email do cliente para testes
+
+
     pool = new Pool(this.dbConfig)
     constructor(emailClient){
         this.emailClient = emailClient
@@ -50,6 +57,25 @@ class Banco{
     setEmailClient(emailClient){
         this.emailClient = emailClient
     }   
+
+
+
+
+
+
+
+
+
+
+// Comandos criados para gerir a conta do usuário abaixo
+
+
+
+
+
+
+
+
     async verTabelaUsuario() {
         try{
             const resultado =  await this.pool.query('SELECT * FROM usuario')
@@ -116,11 +142,11 @@ class Banco{
         }
          
     }
-    async alterarNome(x,novoNome){
+    async alterarNome(numeroDigitadoPeloUsuario,novoNome){
         const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
         const y = new Emailsend
         y.mandarEmail(this.emailClient,numeroAleatorio)
-        if (x==numeroAleatorio){
+        if (numeroDigitadoPeloUsuario==numeroAleatorio){
             const values = [novoNome,this.emailClient]
             const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
             const resultado = await this.pool.query(query,values)
@@ -129,8 +155,54 @@ class Banco{
             }
 
         }
-         
     }
+    async excluirConta(numeroDigitadoPeloUsuario){
+            const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
+            const query = "DELETE FROM usuario WHERE email = $1"
+            const y = new Emailsend
+            y.mandarEmail(this.emailClient,numeroAleatorio)
+            console.log("Um coódigo foi enviado para o seu email!")
+            console.log("Agora digite o código enviado para verificar se você é o dono da conta!")
+            if(numeroDigitadoPeloUsuario == numeroAleatorio){
+                try{
+                    await this.pool.query(query,[this.emailClient])
+                    console.log("Conta foi excluida com sucesso!")
+                    this.setEmailClient(null)
+                    this.excluirTodosOsMedicamentosDoEmail()
+                }
+                catch(err){
+                    console.log("Algo inesperado ocorreu: " + err)
+                }
+
+            }
+
+        }
+
+    
+    
+
+
+
+
+
+
+
+
+    
+    // Comandos para CRUD com o remedios cadastrados para orientação do cliente abaixo
+
+
+
+
+
+
+
+    
+
+
+
+
+    
     async cadastrarMedicamento(nomeDoMedicamento,tempoParaTomar){
         const values = [this.emailClient,nomeDoMedicamento,tempoParaTomar]
         const query = 'INSERT INTO medicamento ("email","nome_medicamento","tempo_para_tomar") VALUES($1,$2,$3)'
@@ -152,11 +224,60 @@ class Banco{
             console.log("Remedio = " + medicamento + " : tomar de " + horaMedicamento + " em " + horaMedicamento)
         }
     }
+    async editarMedicamento(nomeDoMedicamento,tempoParaTomar){
+        const values = [nomeDoMedicamento,tempoParaTomar,this.emailClient]
+        const query = "UPDATE medicamento SET nome_medicamento = $1,tempo_para_tomar = $2 WHERE email = $3"
+        try{
+            await this.pool.query(query,values)
+            console.log("As definições do remédio foram atualizados!")
+        }
+        catch(err){
+            console.log("Erro ao atualizar : " + err)
+
+        }
+    }
+    async excluirMedicamento(certeza,nomeDoMedicamento){
+        const values = [nomeDoMedicamento,this.emailClient]
+        const query = "DELETE FROM medicamento WHERE nome_medicamento = $1 AND email = $2"
+        if(certeza = true){
+            try {
+                await this.pool.query(query,values)
+                console.log("Medicamento excluido!")
+            } catch (error) {
+                console.log("Erro ao excluir medicamento: " + error)
+                
+            }
+
+        }
+    }
+    async excluirTodosOsMedicamentosDoEmail(){
+        const query = "DELETE FROM medicamento WHERE  email = $2"
+            try {
+                await this.pool.query(query,[this.emailClient])
+                console.log("Medicamento excluido!")
+            } catch (error) {
+                console.log("Erro ao excluir medicamento: " + error)
+                
+            }
+
+    }
+
 
 }
-const x = new Banco("23.00051-0@maua.br");
+
+
+
+//Area de comando de teste das funções construídas abaixo
+
+
+
+
+
+
+
+const x = new Banco("victorcodinhoto@gmail.com");
 // x.testarConexao()
-// // x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
+x.cadastrarNovoUsuario("Victor","kkk123333")
 // x.validarLogin("23.00051-0@maua.br","aaaaa")
 
 // x.getIdClient()
@@ -165,4 +286,5 @@ x.cadastrarMedicamento("Alegra A", "6 horas")
 x.puxarTodosOsMedicamentoPeloEmail()
 // x.puxarIdPeloEmail("23.00051-0@maua.br")
 // x.verTabelaUsuario()
+// x.excluirConta()
 
