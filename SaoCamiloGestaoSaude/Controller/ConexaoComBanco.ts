@@ -1,3 +1,5 @@
+
+
 const nodemailer = require('nodemailer');
 
 class Emailsend{
@@ -27,7 +29,6 @@ class Emailsend{
 
 const { Pool } = require('pg');
 class Banco{
-    idClient = 0
     dbConfig = {
         user: 'avnadmin',
         host: 'bancodedadosdopii-maua-b52c.a.aivencloud.com',
@@ -39,15 +40,7 @@ class Banco{
         },
       };
     pool = new Pool(this.dbConfig)
-    
 
-    getIdClient() {
-        return this.idClient
-    }
-    setIdClient(idClient){
-        this.idClient = idClient
-        return this.idClient
-    }
     async verTabelaUsuario() {
         try{
             const resultado =  await this.pool.query('SELECT * FROM usuario')
@@ -69,24 +62,20 @@ class Banco{
         catch{
             console.log("Conexão não efeituada")
         }
-
+        
     }
-
-
     async validarLogin(email,password){
         let validacaoDoPassword
         let validacaoUsuario
-        let idDoClient
         const query = "SELECT usuarioo, password,email FROM usuario WHERE email = $1"
         const resultado =  await this.pool.query(query,[email])
             for (let rows of resultado.rows){
                 validacaoDoPassword = rows.password
                 validacaoUsuario = rows.usuarioo
-                idDoClient = rows.id
+
             }
             if(validacaoDoPassword == password){
                 console.log("Bem-Vindo de volta " + validacaoUsuario)
-                this.setIdClient(idDoClient)
             }else{
                 console.log("Senha Incorreta")
             }   
@@ -110,8 +99,7 @@ class Banco{
         const y = new Emailsend
         y.mandarEmail(email,numeroAleatorio)
         if (true){
-            const ponteiroIdDoClient = this.getIdClient()
-            const values = [novaSenha,ponteiroIdDoClient]
+            const values = [novaSenha,email]
             const query = "UPDATE usuario SET password = $1 WHERE id = $2"
             await this.pool.query(query,values)
 
@@ -124,9 +112,8 @@ class Banco{
         const y = new Emailsend
         y.mandarEmail(email,numeroAleatorio)
         if (x==numeroAleatorio){
-            const getIdClient = this.getIdClient()
-            const values = [novoNome,getIdClient]
-            const query = "UPDATE usuario SET usuarioo = $1 WHERE id = $2"
+            const values = [novoNome,email]
+            const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
             const resultado = await this.pool.query(query,values)
             for (const rows of resultado.rows){
                 console.log("Usuario do email "+ email + "  redefinido para " + resultado.rows.usuarioo)
@@ -135,13 +122,38 @@ class Banco{
         }
          
     }
+    async cadastrarMedicamento(email,nomeDoMedicamento,tempoParaTomar){
+        const values = [email,nomeDoMedicamento,tempoParaTomar]
+        const query = 'INSERT INTO medicamento ("email","nome_medicamento","tempo_para_tomar") VALUES($1,$2,$3)'
+        try{
+            await this.pool.query(query,values)
+            console.log("Cadastrado com sucesso!")
+        }catch(err){
+            console.log("Problemas ao cadastrar  " + err)
+        }
+        
+
+    }
+    async puxarTodosOsMedicamentoPeloEmail(email){
+        const query = "SELECT nome_medicamento,tempo_para_tomar FROM medicamento  WHERE email = $1"
+        const resultado = await this.pool.query(query,[email])
+        for (const rows of resultado.rows){
+            const medicamento = rows.nome_medicamento
+            const horaMedicamento = rows.tempo_para_tomar
+            console.log("Remedio = " + medicamento + " : tomar de " + horaMedicamento + " em " + horaMedicamento)
+        }
+    }
 
 }
 const x = new Banco();
-x.testarConexao()
-x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
-x.validarLogin("23.00051-0@maua.br","aaaaa")
+// x.testarConexao()
+// // x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
+// x.validarLogin("23.00051-0@maua.br","aaaaa")
 
-x.alterarSenha("23.00051-0@maua.br","xxxx")
+// x.getIdClient()
+// x.alterarSenha("23.00051-0@maua.br","xxxx")
+x.cadastrarMedicamento("23.00051-0@maua.br","Alegra A", "6 horas")
+x.puxarTodosOsMedicamentoPeloEmail("23.00051-0@maua.br")
+// x.puxarIdPeloEmail("23.00051-0@maua.br")
 // x.verTabelaUsuario()
 
