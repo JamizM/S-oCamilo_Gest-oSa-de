@@ -92,9 +92,9 @@ class Banco{
     }
 
 
-    async cadastrarNovoUsuario(userr,password,email){
+    async cadastrarNovoUsuario(userr,password){
         try{
-            const values = [userr,password,email]
+            const values = [userr,password,this.emailClient]
             const query = `INSERT INTO usuario ("usuarioo", "password","email") VALUES ($1,$2,$3)`
             await this.pool.query({text: query,values})
             console.log("Cadastrado!")
