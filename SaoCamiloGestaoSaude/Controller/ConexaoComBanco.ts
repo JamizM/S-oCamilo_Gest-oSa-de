@@ -73,11 +73,11 @@ class Banco{
         }
         
     }
-    async validarLogin(email,password){
+    async validarLogin(password){
         let validacaoDoPassword
         let validacaoUsuario
         const query = "SELECT usuarioo, password,email FROM usuario WHERE email = $1"
-        const resultado =  await this.pool.query(query,[email])
+        const resultado =  await this.pool.query(query,[this.emailClient])
             for (let rows of resultado.rows){
                 validacaoDoPassword = rows.password
                 validacaoUsuario = rows.usuarioo
@@ -103,12 +103,12 @@ class Banco{
         }
 
     }
-    async alterarSenha(email,novaSenha){
+    async alterarSenha(novaSenha){
         const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
         const y = new Emailsend
-        y.mandarEmail(email,numeroAleatorio)
+        y.mandarEmail(this.emailClient,numeroAleatorio)
         if (true){
-            const values = [novaSenha,email]
+            const values = [novaSenha,this.emailClient]
             const query = "UPDATE usuario SET password = $1 WHERE id = $2"
             await this.pool.query(query,values)
 
@@ -116,23 +116,23 @@ class Banco{
         }
          
     }
-    async alterarNome(email,x,novoNome){
+    async alterarNome(x,novoNome){
         const numeroAleatorio = Math.floor(Math.random() * 9000) + 1000;
         const y = new Emailsend
-        y.mandarEmail(email,numeroAleatorio)
+        y.mandarEmail(this.emailClient,numeroAleatorio)
         if (x==numeroAleatorio){
-            const values = [novoNome,email]
+            const values = [novoNome,this.emailClient]
             const query = "UPDATE usuario SET usuarioo = $1 WHERE email = $2"
             const resultado = await this.pool.query(query,values)
             for (const rows of resultado.rows){
-                console.log("Usuario do email "+ email + "  redefinido para " + resultado.rows.usuarioo)
+                console.log("Usuario do email "+ this.emailClient + "  redefinido para " + resultado.rows.usuarioo)
             }
 
         }
          
     }
-    async cadastrarMedicamento(email,nomeDoMedicamento,tempoParaTomar){
-        const values = [email,nomeDoMedicamento,tempoParaTomar]
+    async cadastrarMedicamento(nomeDoMedicamento,tempoParaTomar){
+        const values = [this.emailClient,nomeDoMedicamento,tempoParaTomar]
         const query = 'INSERT INTO medicamento ("email","nome_medicamento","tempo_para_tomar") VALUES($1,$2,$3)'
         try{
             await this.pool.query(query,values)
@@ -143,9 +143,9 @@ class Banco{
         
 
     }
-    async puxarTodosOsMedicamentoPeloEmail(email){
+    async puxarTodosOsMedicamentoPeloEmail(){
         const query = "SELECT nome_medicamento,tempo_para_tomar FROM medicamento  WHERE email = $1"
-        const resultado = await this.pool.query(query,[email])
+        const resultado = await this.pool.query(query,[this.emailClient])
         for (const rows of resultado.rows){
             const medicamento = rows.nome_medicamento
             const horaMedicamento = rows.tempo_para_tomar
@@ -154,15 +154,15 @@ class Banco{
     }
 
 }
-const x = new Banco();
+const x = new Banco("23.00051-0@maua.br");
 // x.testarConexao()
 // // x.cadastrarNovoUsuario("Victor","MAUA","23.00051-0@maua.br")
 // x.validarLogin("23.00051-0@maua.br","aaaaa")
 
 // x.getIdClient()
 // x.alterarSenha("23.00051-0@maua.br","xxxx")
-x.cadastrarMedicamento("23.00051-0@maua.br","Alegra A", "6 horas")
-x.puxarTodosOsMedicamentoPeloEmail("23.00051-0@maua.br")
+x.cadastrarMedicamento("Alegra A", "6 horas")
+x.puxarTodosOsMedicamentoPeloEmail()
 // x.puxarIdPeloEmail("23.00051-0@maua.br")
 // x.verTabelaUsuario()
 
