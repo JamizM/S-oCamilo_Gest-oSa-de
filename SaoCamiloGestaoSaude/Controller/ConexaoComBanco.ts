@@ -29,6 +29,7 @@ class Emailsend{
 
 const { Pool } = require('pg');
 class Banco{
+    emailClient
     dbConfig = {
         user: 'avnadmin',
         host: 'bancodedadosdopii-maua-b52c.a.aivencloud.com',
@@ -40,7 +41,15 @@ class Banco{
         },
       };
     pool = new Pool(this.dbConfig)
-
+    constructor(emailClient){
+        this.emailClient = emailClient
+    }
+    getEmailClient(){
+        return this.emailClient
+    }
+    setEmailClient(emailClient){
+        this.emailClient = emailClient
+    }   
     async verTabelaUsuario() {
         try{
             const resultado =  await this.pool.query('SELECT * FROM usuario')
