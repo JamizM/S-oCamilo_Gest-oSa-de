@@ -218,7 +218,7 @@ class Banco{
         
 
     }
-    async puxarTodosOsMedicamentoPeloEmail(){
+    async consultarTodosOsMedicamentosDoEmail(){
         const query = "SELECT nome_medicamento,tempo_para_tomar FROM medicamento  WHERE email = $1"
         const resultado = await this.pool.query(query,[this.emailClient])
         for (const rows of resultado.rows){
@@ -264,20 +264,7 @@ class Banco{
             }
 
     }
-    async consultarTodosOsMedicamentosDoEmail(){
-        const query = "SELECT *  FROM medicamento WHERE  email = $2"
-            try {
-                const resultado = await this.pool.query(query,[this.emailClient])
-                console.log("Medicamentos consultados!")
-                for(const rows of resultado.rows){
-                    console.log("Esse são os medicamentos \n" + rows)
-                }
-            } catch (error) {
-                console.log("Erro ao excluir medicamento: " + error)
-                
-            }
-
-    }
+ 
     
     
 
