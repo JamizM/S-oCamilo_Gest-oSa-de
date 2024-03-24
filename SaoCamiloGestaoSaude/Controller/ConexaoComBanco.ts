@@ -169,6 +169,7 @@ class Banco{
                     console.log("Conta foi excluida com sucesso!")
                     this.setEmailClient(null)
                     this.excluirTodosOsMedicamentosDoEmail()
+                    this.excluirTodasAsConsultasDoEmail()
                 }
                 catch(err){
                     console.log("Algo inesperado ocorreu: " + err)
@@ -177,6 +178,8 @@ class Banco{
             }
 
         }
+    
+    
 
     
     
@@ -261,9 +264,150 @@ class Banco{
             }
 
     }
+    async consultarTodosOsMedicamentosDoEmail(){
+        const query = "SELECT *  FROM medicamento WHERE  email = $2"
+            try {
+                const resultado = await this.pool.query(query,[this.emailClient])
+                console.log("Medicamentos consultados!")
+                for(const rows of resultado.rows){
+                    console.log("Esse são os medicamentos \n" + rows)
+                }
+            } catch (error) {
+                console.log("Erro ao excluir medicamento: " + error)
+                
+            }
+
+    }
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    // COmandos para consulta
+
+
+
+
+
+
+
+
+    async cadastrarNovaConsulta(dataConsulta,qualTipoDeConsulta){
+        const query = "INSERT INTO consultasmedicas(emailpaciente,data,qualmedico) VALUES($1,$2,$3)"
+        const values = [this.emailClient,dataConsulta,qualTipoDeConsulta]
+        try{
+            await this.pool.query(query,values)
+            console.log("Consulta Cadastrada!")
+        }
+        catch(err){
+            console.log("Deu erro ao cadastrar:   "  + err)
+        }
+       
+        
+    }
+
+    async editarConsulta(dataConsulta,qualTipoDeConsulta){
+        const query = "UPDATE consultasmedicas SET data = $1, qualmedico = $2 WHERE emailpaciente = $3  "
+        const values = [this.emailClient,dataConsulta,qualTipoDeConsulta]
+        try{
+            await this.pool.query(query,values)
+            console.log("Consulta alterada!")
+        }
+        catch(err){
+            console.log("Deu erro ao alterar:   "  + err)
+        }
+       
+        
+    }
+    async excluirConsulta(qualTipoDeConsulta){
+        const query = "DELETE FROM consultasmedicas WHERE emailpaciente = $1 AND qualmedico = %2  "
+        const values = [this.emailClient,qualTipoDeConsulta]
+        try{
+            await this.pool.query(query,values)
+            console.log("Consulta excluida!")
+        }
+        catch(err){
+            console.log("Deu erro ao excluir:   "  + err)
+        }
+       
+    }
+
+    async excluirTodasAsConsultasDoEmail(){
+        const query = "DELETE FROM consultasmedicas WHERE emailpaciente = $1"
+        const values = [this.emailClient]
+        try{
+            await this.pool.query(query,values)
+            console.log("Consultas excluidas!")
+        }
+        catch(err){
+            console.log("Deu erro ao excluir:   "  + err)
+        }
+       
+    }
+
+    async consultarTodasAsConsultasMedicasDoEmail(){
+        const query = "SELECT * FROM consultasmedicas WHERE emailpaciente = $1"
+        const values = [this.emailClient]
+        try{
+             const resultado = await this.pool.query(query,values)
+            console.log("Consultas puxadas!")
+            for( const rows in resultado.rows){
+                console.log(rows)
+            }
+        }
+        catch(err){
+            console.log("Deu erro ao excluir:   "  + err)
+        }
+       
+    }
+   
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
